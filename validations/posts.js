@@ -88,7 +88,7 @@ const bodyData = {
         if (notIntegerId) {
           throw new Error(`Uno o più ID non sono dei numeri interi.`);
         }
-        const tags = await prisma.ingredient.findMany({
+        const tags = await prisma.tag.findMany({
           where: { id: { in: ids } },
         });
         if (tags.length !== ids.length) {
