@@ -9,7 +9,7 @@ const app = express();
 const cors = require("cors");
 
 require("dotenv").config();
-const { PORT } = process.env;
+const { PORT, HOST } = process.env;
 const port = PORT || 3000;
 
 app.use(cors());
@@ -23,5 +23,5 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`Server attivo su http://localhost:${port}`);
+  console.log(`Server attivo su ${HOST}:${port}`);
 });
