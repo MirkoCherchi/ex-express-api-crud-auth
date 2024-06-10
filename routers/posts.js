@@ -7,14 +7,20 @@ const {
   update, // MODIFICO POST
   destroy, // CANCELLO POST
 } = require("../controllers/posts.js");
+const validator = require("../middlewares/validator.js");
+const { paramID } = require("../validations/generic.js");
+const { bodyData } = require("../validations/posts.js");
+const authenticateToken = require("../middlewares/auth.js");
 
-router.post("/", store);
+router.use(authenticateToken);
+
+router.post("/", validator(bodyData), store);
 
 router.get("/", index);
 
 router.get("/:slug", show);
 
-router.put("/:slug", update);
+router.put("/:slug", validator(bodyData), update);
 
 router.delete("/:slug", destroy);
 
