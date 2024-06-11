@@ -10,9 +10,9 @@ const {
 const validator = require("../middlewares/validator.js");
 const { paramID } = require("../validations/generic.js");
 const { bodyData } = require("../validations/posts.js");
-const authenticateToken = require("../middlewares/auth.js");
+// const authenticateToken = require("../middlewares/auth.js");
 
-router.use(authenticateToken);
+// router.use(authenticateToken);
 
 router.post("/", validator(bodyData), store);
 

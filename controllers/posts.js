@@ -69,7 +69,7 @@ const index = async (req, res) => {
       ];
     }
 
-    const { page = 1, limit = 5 } = req.query;
+    const { page = 1, limit = 20 } = req.query;
 
     const offset = (page - 1) * limit;
 
