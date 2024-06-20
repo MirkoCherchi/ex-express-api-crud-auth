@@ -10,11 +10,15 @@ const generateSlug = (title) => {
 };
 
 const store = async (req, res) => {
-  const { title, content, categoryId, tags, img } = req.body;
+  const { title, content, categoryId, tags, img, published } = req.body;
   const slug = generateSlug(title);
+
   if (categoryId) {
+    // Converti categoryId in un numero intero prima di usarlo
+    const categoryIdInt = parseInt(categoryId, 10);
+
     const categoryExists = await prisma.category.findUnique({
-      where: { id: categoryId },
+      where: { id: categoryIdInt },
     });
 
     if (!categoryExists) {
@@ -27,14 +31,14 @@ const store = async (req, res) => {
     slug,
     content,
     img,
-    published: req.body.published ? true : false,
+    published: published ? true : false,
     tags: {
       connect: tags.map((id) => ({ id })),
     },
   };
 
   if (categoryId) {
-    data.categoryId = categoryId;
+    data.categoryId = parseInt(categoryId, 10); // Assicurati di usare il numero intero
   }
 
   try {
@@ -139,26 +143,29 @@ const show = async (req, res) => {
 const update = async (req, res) => {
   try {
     const { slug } = req.params;
-    const { title, content, categoryId, tags } = req.body;
+    const { title, content, categoryId, tags, published } = req.body;
     const data = {
       title,
       content,
-      published: req.body.available ? true : false,
+      published: published ? true : false,
       tags: {
-        set: published.map((id) => ({ id })),
+        set: tags.map((id) => ({ id })),
       },
     };
     if (categoryId) {
       data.categoryId = categoryId;
     }
 
-    if (postData.title) {
-      const newSlug = generateSlug(postData.title);
-      postData.slug = newSlug;
+    if (data.title) {
+      const newSlug = generateSlug(data.title);
+      data.slug = newSlug;
     }
     const updatedPost = await prisma.post.update({
       where: { slug },
-      data: postData,
+      data,
+      include: {
+        tags: true,
+      },
     });
 
     res.json(updatedPost);
