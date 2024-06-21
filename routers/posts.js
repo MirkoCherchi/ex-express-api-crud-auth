@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const upload = require("../middlewares/upload");
 const {
   store, // CREA POST
   index, // TUTTI I POST
@@ -14,13 +16,14 @@ const { bodyData } = require("../validations/posts.js");
 
 // router.use(authenticateToken);
 
-router.post("/", validator(bodyData), store);
+// Modifica il percorso in cui vengono salvate le immagini
+router.post("/", upload.single("img"), validator(bodyData), store);
 
 router.get("/", index);
 
 router.get("/:slug", show);
 
-router.put("/:slug", validator(bodyData), update);
+router.put("/:slug", upload.single("img"), validator(bodyData), update);
 
 router.delete("/:slug", destroy);
 

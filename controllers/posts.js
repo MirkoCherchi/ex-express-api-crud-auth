@@ -2,6 +2,9 @@ const { PrismaClient } = require("@prisma/client");
 const errorHandler = require("../middlewares/errorHandler.js");
 const prisma = new PrismaClient();
 
+const { PORT, HOST } = process.env;
+const port = PORT || 3000;
+
 const generateSlug = (title) => {
   return title
     .toLowerCase()
@@ -11,11 +14,16 @@ const generateSlug = (title) => {
 
 const store = async (req, res) => {
   const { title, content, categoryId, tags, img, published } = req.body;
+  const { filename } = req.file;
   const slug = generateSlug(title);
 
+  let categoryIdInt;
   if (categoryId) {
-    // Converti categoryId in un numero intero prima di usarlo
-    const categoryIdInt = parseInt(categoryId, 10);
+    categoryIdInt = parseInt(categoryId, 10);
+
+    if (isNaN(categoryIdInt)) {
+      return res.status(400).send("Categoria non valida.");
+    }
 
     const categoryExists = await prisma.category.findUnique({
       where: { id: categoryIdInt },
@@ -30,15 +38,19 @@ const store = async (req, res) => {
     title,
     slug,
     content,
-    img,
     published: published ? true : false,
     tags: {
       connect: tags.map((id) => ({ id })),
     },
   };
 
-  if (categoryId) {
-    data.categoryId = parseInt(categoryId, 10); // Assicurati di usare il numero intero
+  if (categoryIdInt !== undefined) {
+    data.categoryId = categoryIdInt;
+  }
+
+  if (req.file) {
+    // Costruisci l'URL completo per l'immagine
+    data.img = `${req.protocol}://${req.get("host")}/${req.file.filename}`;
   }
 
   try {
@@ -48,6 +60,8 @@ const store = async (req, res) => {
         tags: true,
       },
     });
+    // Restituisci l'URL completo dell'immagine salvata
+    post.img = data.img;
     res.status(200).send(post);
   } catch (error) {
     console.error("Qualcosa è andato storto", error);
