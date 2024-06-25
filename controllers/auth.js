@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const errorHandler = require("../middlewares/errorHandler.js");
 const generateToken = require("../utils/generateToken.js");
 const { hashPassword, comparePassword } = require("../utils/password.js");
+const RestError = require("../utils/restError.js");
 const prisma = new PrismaClient();
 require("dotenv").config();
 const { PORT, HOST } = process.env;

@@ -98,7 +98,7 @@ const bodyData = {
         if (typeof value === "string") {
           return value.split(",").map((id) => parseInt(id.trim(), 10));
         }
-        return value;
+        return value.map((id) => parseInt(id, 10));
       },
     },
     isArray: {

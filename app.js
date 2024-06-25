@@ -34,5 +34,5 @@ app.use(errorHandler);
 
 // Avvio del server
 app.listen(port, () => {
-  console.log(`Server attivo su http://${HOST}:${port}`);
+  console.log(`Server attivo su ${HOST}:${port}`);
 });
